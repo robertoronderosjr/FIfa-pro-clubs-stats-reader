@@ -11,7 +11,6 @@ from skimage.io import imread, imsave
 
 from getters import *
 
-
 stats = {
     "player_name": {
         "l": 241,
@@ -29,7 +28,7 @@ stats = {
         "b": 550,
         "wanted_stats": {
             "Goals": goals,
-            "Shots": shots,
+            "Shots Attempted": shots,
             "Shots on Target": shots_on_target
         }
     },
@@ -40,20 +39,21 @@ stats = {
         "b": 765,
         "wanted_stats": {
             "Assists": assists,
+            "Key Passes": key_passes,
             "Passes Completed": passes_completed,
             "Passes Attempted": passes_attempted,
-            "Key Passes": key_passes,
             "Crosses Completed": crosses_completed,
             "Crosses Attempted": crosses_attempted
         }
     },
+
     "tackles": {
         "l": 1620,
         "t": 486,
         "r": 1678,
         "b": 513,
         "wanted_stats": {
-            "Tackles Won": tackles_won,
+            "DEF Tackles": tackles_won,
         }
     },
     "positioning": {
@@ -72,16 +72,18 @@ stats = {
         "r": 1690,
         "b": 846,
         "wanted_stats": {
+            "Headers Won": headers_won,
             "Possession Won": possession_won,
             "Possession Lost": possession_lost,
-            "Headers Won": headers_won
         }
     }
 }
 
-f = open("team_stats_p2.txt", "w")
+match = 'portovnapoli'
 
-for ss_filename in glob.glob('C:\\Users\\rober\\Videos\\Captures\\p2\\*.png'):
+f = open(f"team_stats_{match}.txt", "w")
+
+for ss_filename in glob.glob(f'C:\\Users\\rober\\Videos\\Captures\\{match}\\*.png'):
     ss = Image.open(ss_filename)
 
     width, height = ss.size
@@ -100,16 +102,16 @@ for ss_filename in glob.glob('C:\\Users\\rober\\Videos\\Captures\\p2\\*.png'):
 
         enhanced_img = Image.open(stats_img_filename)
         enhancer_s = ImageEnhance.Sharpness(enhanced_img)
-        out_s = enhancer_s.enhance(2)
+        out_s = enhancer_s.enhance(5)
         enhancer_c = ImageEnhance.Contrast(out_s)
-        out_c = enhancer_c.enhance(2)
+        out_c = enhancer_c.enhance(1)
         # # out_c.show()
         out_c.save(stats_img_filename)
 
         img_read = cv2.imread(stats_img_filename)
         # blur the image to remove noise
-        gray = cv2.medianBlur(img_read, 3)
-        cv2.imwrite(stats_img_filename, gray)
+        # gray = cv2.medianBlur(img_read, 1)
+        # cv2.imwrite(stats_img_filename, gray)
 
         data = "value\n"
         config = '--psm 6 --oem 0 -c tessedit_char_whitelist=0123456789/'
@@ -124,8 +126,13 @@ for ss_filename in glob.glob('C:\\Users\\rober\\Videos\\Captures\\p2\\*.png'):
         # delete auxiliary images
         # os.remove(stats_img_filename)
         for stat, func in stats[k]["wanted_stats"].items():
-            print(f'{stat}: {func(df)}')
-            f.write(f'{stat}: {func(df)}\n')
+            val = func(df)
+            if isinstance(val, str):
+                print(f'{stat}: {val}')
+                f.write(f'{stat}: {val}\n')
+            elif val > 0:
+                print(f'{stat}: {val}')
+                f.write(f'{stat}: {val}\n')
     f.write('\n\n')
 
 f.close()

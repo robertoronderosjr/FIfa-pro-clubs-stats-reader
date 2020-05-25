@@ -53,7 +53,8 @@ def player_id(df):
 
 
 def tackles_won(df):
-    return get_val(get_df_col_val(df, 0))
+    tackles_split = get_df_col_val(df, 0).split("/")
+    return get_val(tackles_split[1])
 
 
 def interceptions(df):
@@ -79,3 +80,7 @@ def possession_lost(df):
 def headers_won(df):
     possession_split = get_df_col_val(df, 2).split("/")
     return get_val(possession_split[0])
+
+
+def player_position(df):
+    return get_df_col_val(df, 0)

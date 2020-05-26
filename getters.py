@@ -84,3 +84,12 @@ def headers_won(df):
 
 def player_position(df):
     return get_df_col_val(df, 0)
+
+
+def gk_saves(df):
+    saves_split = get_df_col_val(df, 1).split("/")
+    return get_val(saves_split[0]) + get_val(saves_split[1])
+
+
+def goals_against(df):
+    return get_val(get_df_col_val(df, 0))

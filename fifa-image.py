@@ -71,6 +71,16 @@ gk_stats = {
             "Possession Won": possession_won,
             "Possessions Lost": possession_lost,
         }
+    },
+    "goal_keeper": {
+        "l": 878,
+        "t": 450,
+        "r": 930,
+        "b": 587,
+        "wanted_stats": {
+            "Goals Against": goals_against,
+            "GK Saves": gk_saves
+        }
     }
 }
 

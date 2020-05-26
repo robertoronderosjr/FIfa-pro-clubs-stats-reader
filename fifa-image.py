@@ -1,6 +1,7 @@
 import glob
 import io
 import json
+import os
 
 import pandas as pd
 import pytesseract
@@ -181,7 +182,7 @@ def process_image(ss, stats_img_filename, stats, k):
 
     enhanced_img = Image.open(stats_img_filename)
     enhancer_s = ImageEnhance.Sharpness(enhanced_img)
-    out_s = enhancer_s.enhance(5)
+    out_s = enhancer_s.enhance(7)
     # out_s.save(stats_img_filename)
     enhancer_c = ImageEnhance.Contrast(out_s)
     out_c = enhancer_c.enhance(1)
@@ -198,7 +199,7 @@ def read_image(stats_img_filename, k):
     data = "value\n"
     config = '--psm 6 --oem 0 -c tessedit_char_whitelist="0123456789/"'
     if k == "player_name":
-        config = '--psm 6 --oem 0 -c tessedit_char_whitelist="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"'
+        config = '--psm 6 --oem 0 -c tessedit_char_whitelist="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123"'
     if k == "player_position":
         config = '--psm 6 --oem 0 -c tessedit_char_whitelist="ABCDEFGHIJKLMNOPQRSTUVWXYZ"'
 
@@ -265,6 +266,16 @@ for ss_filename in glob.glob(f'C:\\Users\\rober\\Videos\\Captures\\{match}\\*.pn
     ss = Image.open(ss_filename)
 
     width, height = ss.size
+
+    # Minimum Supported resolution
+    assert width >= 1920
+    assert height >= 1080
+
+    # Resize if not in correct size (for higher screen sizes)
+    if width != 1920 and height != 1080:
+        ss = ss.resize((1920, 1080))
+        width, height = ss.size
+
     assert width == 1920
     assert height == 1080
 

@@ -14,6 +14,8 @@ from getters import *
 
 calculated_stats = []
 
+match = 'toronto'
+
 gamertags = {
     "HAGULIDS": "Hafidguti",
     "Mexyl33t": "mexyl33t",
@@ -25,7 +27,11 @@ gamertags = {
     "Chelo": "ElSenorX1276",
     "LC": "LuisCastro92",
     "Andres": "richiandres94",
-    "harloco": "harloco"
+    "Richi": "richiandres94",
+    "harloco": "harloco",
+    "Goat": "Avid Notes",
+    "AustenH": "GloryBoyAusten",
+    "Pipe": "pipenidas15"
 }
 
 gk_stats = {
@@ -116,7 +122,7 @@ player_stats = {
         }
     },
     "passing": {
-        "l": 860,
+        "l": 845,
         "t": 595,
         "r": 923,
         "b": 765,
@@ -161,7 +167,6 @@ player_stats = {
     }
 }
 
-match = 'bayervsporto'
 
 f = open(f"team_stats_{match}.txt", "w")
 j = open(f"team_stats.json", "w")
@@ -182,7 +187,7 @@ def process_image(ss, stats_img_filename, stats, k):
 
     enhanced_img = Image.open(stats_img_filename)
     enhancer_s = ImageEnhance.Sharpness(enhanced_img)
-    out_s = enhancer_s.enhance(7)
+    out_s = enhancer_s.enhance(6)
     # out_s.save(stats_img_filename)
     enhancer_c = ImageEnhance.Contrast(out_s)
     out_c = enhancer_c.enhance(1)
@@ -231,7 +236,7 @@ def process_player(stats):
         for stat, func in stats[k]["wanted_stats"].items():
             if stat == "Position":
                 position = func(df)
-            if position == "PO":
+            if position == "PO" or position == "GK":
                 break
             val = func(df)
             if isinstance(val, str) or val > 0:
@@ -239,9 +244,9 @@ def process_player(stats):
                     val = gamertags[func(df)]
                 out(stat, val)
                 stat_obj[stat] = val
-        if position == "PO":
+        if position == "PO" or position == "GK":
             break
-    if position == "PO":
+    if position == "PO" or position == "GK":
         stat_obj.update(process_gk(gk_stats))
     return stat_obj
 

@@ -6,6 +6,7 @@ import os
 import pandas as pd
 import pytesseract
 from PIL import Image, ImageEnhance
+from cv2 import cv2
 from skimage.exposure import rescale_intensity
 from skimage.filters import threshold_yen
 from skimage.io import imread, imsave
@@ -14,7 +15,7 @@ from getters import *
 
 calculated_stats = []
 
-match = 'toronto'
+match = 'leicester'
 
 gamertags = {
     "HAGULIDS": "Hafidguti",
@@ -26,12 +27,17 @@ gamertags = {
     "Casillas": "jbro435",
     "Chelo": "ElSenorX1276",
     "LC": "LuisCastro92",
+    "LuisCastro92": "LuisCastro92",
     "Andres": "richiandres94",
     "Richi": "richiandres94",
     "harloco": "harloco",
     "Goat": "Avid Notes",
     "AustenH": "GloryBoyAusten",
-    "Pipe": "pipenidas15"
+    "Pipe": "pipenidas15",
+    "Oishi": "GUEROWEREVER 27",
+    "ImEduard09": "imeduard09",
+    "ImEduardU9": "imeduard09",
+    "Javi": "Rayado3000"
 }
 
 gk_stats = {
@@ -94,9 +100,9 @@ gk_stats = {
 player_stats = {
     "player_name": {
         "l": 241,
-        "t": 224,
+        "t": 222,
         "r": 600,
-        "b": 257,
+        "b": 259,
         "wanted_stats": {
             "Player ID": player_id
         }
@@ -202,9 +208,9 @@ def process_image(ss, stats_img_filename, stats, k):
 
 def read_image(stats_img_filename, k):
     data = "value\n"
-    config = '--psm 6 --oem 0 -c tessedit_char_whitelist="0123456789/"'
+    config = '--psm 6 --oem 0 -c tessedit_char_whitelist="/0123456789/"'
     if k == "player_name":
-        config = '--psm 6 --oem 0 -c tessedit_char_whitelist="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123"'
+        config = '--psm 6 --oem 0 -c tessedit_char_whitelist="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01239"'
     if k == "player_position":
         config = '--psm 6 --oem 0 -c tessedit_char_whitelist="ABCDEFGHIJKLMNOPQRSTUVWXYZ"'
 

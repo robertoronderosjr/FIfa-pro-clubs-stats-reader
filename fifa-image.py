@@ -105,7 +105,8 @@ gk_stats = {
         "b": 587,
         "wanted_stats": {
             "Goals Against": goals_against,
-            "Saves": gk_saves
+            "Saves": gk_saves,
+            "Shots Agains": shots_against
         }
     }
 }

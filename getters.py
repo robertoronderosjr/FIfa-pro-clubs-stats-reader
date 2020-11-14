@@ -101,3 +101,7 @@ def gk_saves(df):
 
 def goals_against(df):
     return get_val(get_df_col_val(df, 0))
+
+
+def shots_against(df):
+    return gk_saves(df) + goals_against(df)

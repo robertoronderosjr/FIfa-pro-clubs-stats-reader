@@ -106,7 +106,7 @@ gk_stats = {
         "wanted_stats": {
             "Goals Against": goals_against,
             "Saves": gk_saves,
-            "Shots Agains": shots_against
+            "Shots Against": shots_against
         }
     }
 }

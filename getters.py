@@ -38,6 +38,10 @@ def key_passes(df):
     return get_val(get_df_col_val(df, 3))
 
 
+def fouled(df):
+    return get_val(get_df_col_val(df, 1))
+
+
 def crosses_completed(df):
     crosses_split = get_df_col_val(df, 4).split("/")
     return get_val(crosses_split[0])
@@ -55,6 +59,10 @@ def player_id(df):
 def tackles_won(df):
     tackles_split = get_df_col_val(df, 0).split("/")
     return get_val(tackles_split[1])
+
+
+def fouls(df):
+    return get_val(get_df_col_val(df, 1))
 
 
 def interceptions(df):

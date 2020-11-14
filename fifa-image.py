@@ -4,9 +4,11 @@ import json
 import os
 
 import pandas as pd
+import numpy as np
 import pytesseract
-from PIL import Image, ImageEnhance
+from PIL import Image, ImageEnhance, ImageOps
 from cv2 import cv2
+from skimage.color import rgb2gray
 from skimage.exposure import rescale_intensity
 from skimage.filters import threshold_yen
 from skimage.io import imread, imsave
@@ -15,7 +17,7 @@ from getters import *
 
 calculated_stats = []
 
-match = 'leicester'
+match = 'dcunited'
 
 gamertags = {
     "HAGULIDS": "Hafidguti",
@@ -28,6 +30,8 @@ gamertags = {
     "Chelo": "ElSenorX1276",
     "LC": "LuisCastro92",
     "LuisCastro92": "LuisCastro92",
+    "Barrios": "LuisCastro92",
+    "Cuesfa": "LuisCastro92",
     "Andres": "richiandres94",
     "Richi": "richiandres94",
     "harloco": "harloco",
@@ -37,7 +41,16 @@ gamertags = {
     "Oishi": "GUEROWEREVER 27",
     "ImEduard09": "imeduard09",
     "ImEduardU9": "imeduard09",
-    "Javi": "Rayado3000"
+    "Javi": "Rayado3000",
+    "ElColombiano": "ElColombiano790",
+    "operation": "Operation Force",
+    "Castro": "LuisCastro92",
+    "Melvin": "MiltonDuq",
+    "Gambl": "Gamblll",
+    "GUCCITREEg": "GUCCITREES",
+    "andresinho": "andresinho0111",
+    "AirlessFlea7": "AirlessFlea7",
+    "Memphis": "z Noty"
 }
 
 gk_stats = {
@@ -81,7 +94,7 @@ gk_stats = {
         "b": 864,
         "wanted_stats": {
             "Headers Won": headers_won,
-            "Possession Won": possession_won,
+            "Possessions Won": possession_won,
             "Possessions Lost": possession_lost,
         }
     },
@@ -92,7 +105,7 @@ gk_stats = {
         "b": 587,
         "wanted_stats": {
             "Goals Against": goals_against,
-            "GK Saves": gk_saves
+            "Saves": gk_saves
         }
     }
 }
@@ -123,8 +136,8 @@ player_stats = {
         "b": 550,
         "wanted_stats": {
             "Goals": goals,
-            "Shots Attempted": shots,
-            "Shots On Target": shots_on_target
+            "Shots": shots,
+            "SOG": shots_on_target
         }
     },
     "passing": {
@@ -141,13 +154,23 @@ player_stats = {
             "Crosses Attempted": crosses_attempted
         }
     },
+    "movement": {
+        "l": 845,
+        "t": 811,
+        "r": 923,
+        "b": 913,
+        "wanted_stats": {
+            "fouled": fouled
+        }
+    },
     "tackles": {
         "l": 1620,
         "t": 486,
         "r": 1678,
-        "b": 513,
+        "b": 586,
         "wanted_stats": {
-            "DEF Tackles": tackles_won,
+            "Tackles": tackles_won,
+            "fouls": fouls
         }
     },
     "positioning": {
@@ -167,7 +190,7 @@ player_stats = {
         "b": 846,
         "wanted_stats": {
             "Headers Won": headers_won,
-            "Possession Won": possession_won,
+            "Possessions Won": possession_won,
             "Possessions Lost": possession_lost,
         }
     }
@@ -189,11 +212,13 @@ def process_image(ss, stats_img_filename, stats, k):
     img = imread(stats_img_filename)
     yen_threshold = threshold_yen(img)
     bright = rescale_intensity(img, (0, yen_threshold), (0, 255))
-    imsave(stats_img_filename, bright)
+    bw_img = rgb2gray(bright)
+    imsave(stats_img_filename, bw_img)
+
 
     enhanced_img = Image.open(stats_img_filename)
     enhancer_s = ImageEnhance.Sharpness(enhanced_img)
-    out_s = enhancer_s.enhance(6)
+    out_s = enhancer_s.enhance(5)
     # out_s.save(stats_img_filename)
     enhancer_c = ImageEnhance.Contrast(out_s)
     out_c = enhancer_c.enhance(1)
@@ -210,7 +235,7 @@ def read_image(stats_img_filename, k):
     data = "value\n"
     config = '--psm 6 --oem 0 -c tessedit_char_whitelist="/0123456789/"'
     if k == "player_name":
-        config = '--psm 6 --oem 0 -c tessedit_char_whitelist="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01239"'
+        config = '--psm 6 --oem 0 -c tessedit_char_whitelist="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012379"'
     if k == "player_position":
         config = '--psm 6 --oem 0 -c tessedit_char_whitelist="ABCDEFGHIJKLMNOPQRSTUVWXYZ"'
 
@@ -273,9 +298,20 @@ def process_gk(stats):
     return stat_obj
 
 
+def invert_img(image):
+    if image.mode == 'RGBA':
+        r, g, b, a = image.split()
+        rgb_image = Image.merge('RGB', (r, g, b))
+        inverted_image = ImageOps.invert(rgb_image)
+        r2, g2, b2 = inverted_image.split()
+        return Image.merge('RGBA', (r2, g2, b2, a))
+    else:
+        return ImageOps.invert(image)
+
+
 for ss_filename in glob.glob(f'C:\\Users\\rober\\Videos\\Captures\\{match}\\*.png'):
     ss = Image.open(ss_filename)
-
+    ss = invert_img(ss)
     width, height = ss.size
 
     # Minimum Supported resolution
